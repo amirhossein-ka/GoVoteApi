@@ -10,7 +10,7 @@ type (
 		FullName string             `bson:"fullname"`
 		UserName string             `bson:"username"`
 		Email    string             `bson:"email"`
-        Password string             `bson:"password"`
+		Password string             `bson:"password"`
 		UserRole UserRole           `bson:"role"`
 	}
 )

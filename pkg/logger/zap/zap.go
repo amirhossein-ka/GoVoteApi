@@ -13,7 +13,6 @@ type logger_impl struct {
 	z *zap.SugaredLogger
 }
 
-
 func New(cfg *config.Log) (logger.Logger, error) {
 	writer, err := loggerWriter(cfg.FilePath)
 	if err != nil {

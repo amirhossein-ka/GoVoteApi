@@ -65,7 +65,7 @@ func (h *handler) authorizationMiddleware(next http.HandlerFunc) http.HandlerFun
 
 func getAuthToken(r *http.Request) (string, error) {
 	// reqToken := w.Header.Get("Authorization")
-    reqToken := r.Header.Get("Authorization")
+	reqToken := r.Header.Get("Authorization")
 	splitToken := strings.Split(reqToken, "Bearer")
 	if len(splitToken) != 2 {
 		// Error: Bearer token not in proper format

@@ -36,10 +36,10 @@ func New(ctx context.Context, cfg *config.DBMongo) (repository.Repository, error
 
 	return &mongoImpl{
 		// client: client,
-		db:  database,
-		cfg: cfg,
-        userCol: database.Collection("users"),
-        voteCol: database.Collection("votes"),
+		db:      database,
+		cfg:     cfg,
+		userCol: database.Collection("users"),
+		voteCol: database.Collection("votes"),
 	}, nil
 }
 

@@ -11,7 +11,7 @@ import (
 type user_impl struct {
 	repo      repository.Repository
 	cache     repository.Cache
-    validator *validator.Validate
+	validator *validator.Validate
 	auth      service.AuthService
 	cfg       *config.Config
 }

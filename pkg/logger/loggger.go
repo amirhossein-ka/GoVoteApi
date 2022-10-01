@@ -9,6 +9,6 @@ type (
 
 	LogData struct {
 		Section string
-		Message   string
+		Message string
 	}
 )

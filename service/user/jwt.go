@@ -48,5 +48,5 @@ func ValidateToken(tokenStr, secret string, role models.UserRole) (bool, error) 
 		return true, nil
 	}
 
-    return false, fmt.Errorf("invalid token")
+	return false, fmt.Errorf("invalid token")
 }
