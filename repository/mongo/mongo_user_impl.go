@@ -64,7 +64,7 @@ func (m *mongoImpl) GetUser(ctx context.Context, id string) (*models.User, error
 
 	filter := bson.D{{Key: "_id", Value: objID}}
 	var result models.User
-	if err := m.db.Collection(userCollection).FindOne(ctx, filter).Decode(&result); err != nil {
+	if err := m.userCol.FindOne(ctx, filter).Decode(&result); err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, ErrNoDocuments
 		}

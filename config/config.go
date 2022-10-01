@@ -5,6 +5,8 @@ type (
 		DBMongo DBMongo
 		DBRedis DBRedis
 		Log     Log
+		Secrets Secrets
+		Server  Server
 	}
 
 	DBMongo struct {
@@ -25,5 +27,12 @@ type (
 		FilePath string
 	}
 	Server struct {
+		Addr string
+		Port string
+	}
+
+	Secrets struct {
+		JwtSecret string `envconfig:"JWT_SECRET"`
+		ExpTime   int    `envconfig:"EXP_TIME"`
 	}
 )
