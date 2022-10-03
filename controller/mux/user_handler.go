@@ -46,7 +46,6 @@ func (h *handler) login(w http.ResponseWriter, r *http.Request) {
 		writeJson(w, http.StatusBadRequest, dto.Error{Status: dto.StatusError, Error: err.Error()})
 		return
 	}
-
 	writeJson(w, http.StatusCreated, resp)
 }
 
@@ -61,6 +60,8 @@ func (h *handler) delete(w http.ResponseWriter, r *http.Request) {
 		writeJson(w, http.StatusBadRequest, dto.Error{Status: dto.StatusError, Error: err.Error()})
 		return
 	}
+
+	writeJson(w, http.StatusOK, &dto.UserResponse{Status: dto.StatusDeleted, Data: "user deleted"})
 }
 
 func (h *handler) info(w http.ResponseWriter, r *http.Request) {

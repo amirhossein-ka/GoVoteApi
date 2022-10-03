@@ -6,11 +6,10 @@ import (
 	"GoVoteApi/pkg/logger"
 	"GoVoteApi/pkg/logger/zap"
 	"GoVoteApi/repository/memcache"
-	"GoVoteApi/repository/mongo"
+	"GoVoteApi/repository/postgres"
 	"GoVoteApi/service"
 	"GoVoteApi/service/auth"
 	"GoVoteApi/service/user"
-	"context"
 	"os"
 	"os/signal"
 	"syscall"
@@ -47,15 +46,15 @@ func Run(cfg *config.Config) error {
 }
 
 func getService(cfg *config.Config) (service.Service, error) {
-	mongo, err := mongo.New(context.Background(), &cfg.DBMongo)
+	repo, err := postgres.New(cfg.DBPostgres)
 	if err != nil {
 		return nil, err
 	}
-	memcache := memcache.New()
+	cache := memcache.New()
 
 	a := auth.New(cfg.Secrets)
 	validate := validator.New()
-	userService := user.New(mongo, validate, memcache, a, cfg)
+	userService := user.New(repo, validate, cache, a, cfg)
 
 	type srv struct {
 		service.AuthService

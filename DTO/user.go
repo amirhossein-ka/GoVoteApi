@@ -4,7 +4,7 @@ type (
 	Status string
 
 	UserRequest struct {
-		ID       string `json:"id"`
+		ID       uint   `json:"id"`
 		Username string `json:"username" validate:"required,min=6"`
 		Fullname string `json:"fullname" validate:"required"`
 		Email    string `json:"email" validate:"required,email"`
@@ -13,7 +13,7 @@ type (
 
 	UserResponse struct {
 		Status Status `json:"status"`
-		ID     string `json:"id,omitempty"`
+		ID     uint   `json:"id,omitempty"`
 		Token  string `json:"token,omitempty"`
 		Data   any    `json:"data,omitempty"`
 	}
@@ -22,5 +22,6 @@ type (
 const (
 	StatusFound   Status = "found"
 	StatusCreated Status = "created"
+	StatusDeleted Status = "deleted"
 	StatusError   Status = "error"
 )

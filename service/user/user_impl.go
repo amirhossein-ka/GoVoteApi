@@ -3,30 +3,21 @@ package user
 import (
 	dto "GoVoteApi/DTO"
 	"GoVoteApi/models"
-	"GoVoteApi/repository/mongo"
+	// "GoVoteApi/repository/postgres"
 	"context"
 	"errors"
+	"fmt"
 	// "github.com/go-playground/validator/v10"
 )
 
-// const token_hash string = "bananana"
-
-var ErrUsernameExists error = errors.New("given username already exists")
+var ErrUsernameExists = errors.New("given username already exists")
 
 // Delete implements service.UserService
 func (u *user_impl) Delete(ctx context.Context, ur *dto.UserRequest) error {
-	u.validator.StructExcept(ur, "FullName", "Email", "Password")
-	var id string
-	if ur.ID != "" {
-		id = ur.ID
-	} else if len(ur.Username) >= 6 {
-		user, err := u.repo.GetUserByUsername(ctx, ur.Username)
-		if err != nil {
-			return err
-		}
-		id = user.ID.Hex()
+	if err := u.validator.StructPartial(ur, "ID"); err != nil {
+		return err
 	}
-	return u.repo.DeleteUser(ctx, id)
+	return u.repo.DeleteUser(ctx, ur.ID)
 }
 
 // Login implements service.UserService
@@ -35,33 +26,36 @@ func (u *user_impl) Login(ctx context.Context, username, pass string) (*dto.User
 	if err != nil {
 		return nil, err
 	}
+
 	var token string
 	if comparePass(pass, user.Password) {
-		token, err = u.auth.GenerateToken(user.ID.Hex(), user.UserName, user.UserRole)
+		token, err = u.auth.GenerateToken(user.ID, user.UserName, user.UserRole)
 		if err != nil {
 			return nil, err
 		}
+	} else {
+		return nil, fmt.Errorf("invalid password")
 	}
 
 	return &dto.UserResponse{
 		Status: dto.StatusFound,
-		ID:     user.ID.Hex(),
+		ID:     user.ID,
 		Token:  token,
 	}, nil
 }
 
 // Register implements service.UserService
 func (u *user_impl) Register(ctx context.Context, ur *dto.UserRequest) (*dto.UserResponse, error) {
-	user, err := u.repo.GetUserByUsername(ctx, ur.Username)
-	if err != nil && err != mongo.ErrNoDocuments {
-		return nil, err
-	}
-	if user != nil {
-		return nil, ErrUsernameExists
-	}
+	// user, err := u.repo.GetUserByUsername(ctx, ur.Username)
+	// if errors.Is(err, postgres.ErrNoUserFound) {
+	// 	return nil, err
+	// }
+	// if user != nil {
+	// 	return nil, ErrUsernameExists
+	// }
 
 	// validate data
-	if err = u.validator.Struct(ur); err != nil {
+	if err := u.validator.Struct(ur); err != nil {
 		// err.(validator.ValidationErrors)
 		return nil, err
 	}

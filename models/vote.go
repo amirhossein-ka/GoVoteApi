@@ -1,25 +1,30 @@
 package models
 
-import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
-)
+import "database/sql/driver"
+
+// TODO
+// 1. complete vote repo,
+// 2. mayyybe change to psql
+// 3. idk,
 
 type (
 	VoteType   uint8
 	VoteStatus uint8
 
 	Vote struct {
-		ID          primitive.ObjectID
-		Title       string        `bson:"title"`
-		Type        VoteType      `bson:"type"`
-		Status      VoteStatus    `bson:"status"`
-		VoteOptions []VoteOptions `bson:"options"`
+		ID          uint          `json:"id,omitempty"`
+		Title       string        `json:"title"`
+		Slug        string        `json:"slug"`
+		Type        VoteType      `json:"type"`
+		Status      VoteStatus    `json:"status"`
+		UserIDs     []string      `json:"user_ids"`
+		VoteOptions []VoteOptions `json:"options"`
 	}
 
 	VoteOptions struct {
-		Option       string `bson:"option"`
-		Count        string `bson:"cout"`
-		IsQuizAnswer bool   `bson:"is_answer"`
+		Option       string `json:"option"`
+		Count        uint   `json:"cout"`
+		IsQuizAnswer bool   `json:"is_answer"`
 	}
 )
 
@@ -29,6 +34,15 @@ const (
 	VoteAnon
 	VoteMulti
 )
+
+func (v *VoteType) Scan(value any) error {
+	*v = VoteType(value.(uint8))
+	return nil
+}
+
+func (v VoteType) Value() (driver.Value, error) {
+	return int64(v), nil
+}
 
 const (
 	_ VoteStatus = iota

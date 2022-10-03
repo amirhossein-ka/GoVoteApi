@@ -2,18 +2,11 @@ package config
 
 type (
 	Config struct {
-		DBMongo DBMongo
-		DBRedis DBRedis
-		Log     Log
-		Secrets Secrets
-		Server  Server
-	}
-
-	DBMongo struct {
-		URI        string
-		DBName     string
-		Collection string
-		Timeout    int
+		DBRedis    DBRedis
+		DBPostgres DBPostgres
+		Log        Log
+		Secrets    Secrets
+		Server     Server
 	}
 
 	DBRedis struct {
@@ -21,6 +14,12 @@ type (
 		Port string
 		User string
 		Pass string
+	}
+
+	DBPostgres struct {
+		URI     string
+		DBName  string
+		Timeout uint16
 	}
 
 	Log struct {

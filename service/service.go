@@ -22,7 +22,7 @@ type (
 	}
 
 	AuthService interface {
-		GenerateToken(id, username string, role models.UserRole) (string, error)
+		GenerateToken(id uint, username string, role models.UserRole) (string, error)
 		ClaimsFromToken(token string) (any, error)
 	}
 )

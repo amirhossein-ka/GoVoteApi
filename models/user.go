@@ -1,17 +1,17 @@
 package models
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import "database/sql/driver"
 
 type (
 	UserRole uint8
 
 	User struct {
-		ID       primitive.ObjectID `bson:"_id,omitempty"`
-		FullName string             `bson:"fullname"`
-		UserName string             `bson:"username"`
-		Email    string             `bson:"email"`
-		Password string             `bson:"password"`
-		UserRole UserRole           `bson:"role"`
+		ID       uint     `json:"id,omitempty"`
+		FullName string   `json:"fullname"`
+		UserName string   `json:"username"`
+		Email    string   `json:"email"`
+		Password string   `json:"password,omitempty"`
+		UserRole UserRole `json:"role,omitempty"`
 	}
 )
 
@@ -20,3 +20,13 @@ const (
 	NormalUser
 	AdminUser
 )
+
+// Scan implements sql.Scanner
+func (u *UserRole) Scan(value any) error {
+	*u = UserRole(value.(int64))
+	return nil
+}
+
+func (u *UserRole) Value() (driver.Value, error) {
+	return int64(*u), nil
+}

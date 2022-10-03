@@ -9,7 +9,7 @@ func hashPass(pass string) (string, error) {
 
 // comparePass compare given password (gpass) with hashed password from db (dpass)
 // return true if they are same
-func comparePass(gpass, dpass string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(dpass), []byte(gpass))
+func comparePass(newPass, oldPass string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(oldPass), []byte(newPass))
 	return err == nil
 }

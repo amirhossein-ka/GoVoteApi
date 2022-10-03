@@ -15,15 +15,14 @@ type auth struct {
 }
 
 type JwtClaims struct {
-	// ID is mongodb ID
-	ID       string
+	ID       uint
 	Username string
 	Role     models.UserRole
 	jwt.RegisteredClaims
 }
 
 // GenerateToken implements service.AuthService
-func (a *auth) GenerateToken(id, username string, role models.UserRole) (string, error) {
+func (a *auth) GenerateToken(id uint, username string, role models.UserRole) (string, error) {
 	expTime := time.Now().Add(time.Duration(a.cfg.ExpTime) * time.Minute)
 	claims := JwtClaims{
 		ID:       id,
@@ -39,7 +38,7 @@ func (a *auth) GenerateToken(id, username string, role models.UserRole) (string,
 	return jc.SignedString([]byte(a.cfg.JwtSecret))
 }
 
-// VerifyToken implements service.AuthService
+// ClaimsFromToken implements service.AuthService
 // this function check that user has the given role from token string
 // and return token claims
 func (a *auth) ClaimsFromToken(tokenStr string) (any, error) {

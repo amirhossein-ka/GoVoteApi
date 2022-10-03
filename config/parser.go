@@ -5,7 +5,7 @@ import (
 )
 
 func ParseEnv(cfg *Config) error {
-	if err := envconfig.Process("mongo", &cfg.DBMongo); err != nil {
+	if err := envconfig.Process("postgres", &cfg.DBPostgres); err != nil {
 		return err
 	}
 	if err := envconfig.Process("redis", &cfg.DBRedis); err != nil {
