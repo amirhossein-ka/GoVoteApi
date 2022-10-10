@@ -3,6 +3,8 @@ package user
 import (
 	dto "GoVoteApi/DTO"
 	"GoVoteApi/models"
+	"GoVoteApi/repository/postgres"
+
 	// "GoVoteApi/repository/postgres"
 	"context"
 	"errors"
@@ -13,7 +15,7 @@ import (
 var ErrUsernameExists = errors.New("given username already exists")
 
 // Delete implements service.UserService
-func (u *user_impl) Delete(ctx context.Context, ur *dto.UserRequest) error {
+func (u *userImpl) Delete(ctx context.Context, ur *dto.UserRequest) error {
 	if err := u.validator.StructPartial(ur, "ID"); err != nil {
 		return err
 	}
@@ -21,7 +23,7 @@ func (u *user_impl) Delete(ctx context.Context, ur *dto.UserRequest) error {
 }
 
 // Login implements service.UserService
-func (u *user_impl) Login(ctx context.Context, username, pass string) (*dto.UserResponse, error) {
+func (u *userImpl) Login(ctx context.Context, username, pass string) (*dto.UserResponse, error) {
 	user, err := u.repo.GetUserByUsername(ctx, username)
 	if err != nil {
 		return nil, err
@@ -45,16 +47,18 @@ func (u *user_impl) Login(ctx context.Context, username, pass string) (*dto.User
 }
 
 // Register implements service.UserService
-func (u *user_impl) Register(ctx context.Context, ur *dto.UserRequest) (*dto.UserResponse, error) {
-	// user, err := u.repo.GetUserByUsername(ctx, ur.Username)
-	// if errors.Is(err, postgres.ErrNoUserFound) {
-	// 	return nil, err
-	// }
-	// if user != nil {
-	// 	return nil, ErrUsernameExists
-	// }
+func (u *userImpl) Register(ctx context.Context, ur *dto.UserRequest) (*dto.UserResponse, error) {
+	user, err := u.repo.GetUserByUsername(ctx, ur.Username)
+	if err != postgres.ErrNoUserFound {
+		println("other error occurred")
+		return nil, err
+	}
+	if user != nil {
+		println("username exists, bad")
+		return nil, ErrUsernameExists
+	}
 
-	// validate data
+	//validate data
 	if err := u.validator.Struct(ur); err != nil {
 		// err.(validator.ValidationErrors)
 		return nil, err
@@ -103,7 +107,7 @@ func (u *user_impl) Register(ctx context.Context, ur *dto.UserRequest) (*dto.Use
 	}, nil
 }
 
-func (u *user_impl) Info(ctx context.Context, username string) (*dto.UserResponse, error) {
+func (u *userImpl) Info(ctx context.Context, username string) (*dto.UserResponse, error) {
 	// if len(username) >= 6 {
 	// 	return nil, fmt.Errorf("invalid username")
 	// }

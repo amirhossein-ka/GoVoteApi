@@ -12,14 +12,12 @@ var ErrNoUserFound = errors.New("no user found with given username")
 
 // CreateUser implements repository.Repository
 func (p *psql) CreateUser(ctx context.Context, u *models.User) (uint, error) {
-	fmt.Printf("%#v\n\n", u)
 	var id int
 	err := p.db.QueryRowContext(ctx, "INSERT INTO users (username, fullname, password, email, role) VALUES ($1,$2,$3,$4,$5) RETURNING user_id",
 		u.UserName, u.FullName, u.Password, u.Email, u.UserRole).Scan(&id)
 	if err != nil {
 		return 0, err
 	}
-	println(id)
 	return uint(id), nil
 }
 

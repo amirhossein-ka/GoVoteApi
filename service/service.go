@@ -19,6 +19,13 @@ type (
 		Info(ctx context.Context, username string) (*dto.UserResponse, error)
 	}
 	VoteService interface {
+		CreateVote(ctx context.Context, req *dto.VoteRequest) (*dto.VoteResponse, error)
+		GetAllVotes(ctx context.Context, limit, offset int, status dto.VoteStatus) ([]dto.VoteResponse, error)
+		GetVoteByID(ctx context.Context, id uint) (*dto.VoteResponse, error)
+		GetVoteBySlug(ctx context.Context, slug string) (*dto.VoteResponse, error)
+		AddVote(ctx context.Context, vote *dto.Voters) (*dto.VoteResponse, error)
+		AddVoteSlug(ctx context.Context, slug string, vote *dto.Voters) (*dto.VoteResponse, error)
+		UpdateUserVote(ctx context.Context, vote *dto.Voters) (*dto.VoteResponse, error)
 	}
 
 	AuthService interface {

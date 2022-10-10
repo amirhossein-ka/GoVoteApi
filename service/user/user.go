@@ -8,7 +8,7 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-type user_impl struct {
+type userImpl struct {
 	repo      repository.Repository
 	cache     repository.Cache
 	validator *validator.Validate
@@ -23,7 +23,7 @@ func New(
 	a service.AuthService,
 	cfg *config.Config,
 ) service.UserService {
-	return &user_impl{
+	return &userImpl{
 		cfg:       cfg,
 		repo:      r,
 		validator: v,

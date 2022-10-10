@@ -14,7 +14,6 @@ type psql struct {
 	db *sql.DB
 }
 
-
 func New(cfg config.DBPostgres) (repository.Repository, error) {
 	db, err := sql.Open("pgx", cfg.URI)
 	if err != nil {

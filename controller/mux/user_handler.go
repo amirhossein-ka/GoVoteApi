@@ -11,19 +11,15 @@ import (
 func (h *handler) register(w http.ResponseWriter, r *http.Request) {
 	var req dto.UserRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeJson(w, http.StatusBadRequest, dto.Error{Status: dto.StatusError, Error: err.Error()})
-		return
+		panic(&Error{Err: err, Section: "register->newDecoder", StatusCode: http.StatusBadRequest, LogLevel: ErrorLevel, Log: false})
 	}
 
 	resp, err := h.srv.Register(r.Context(), &req)
 	if err != nil {
 		if err == user.ErrUsernameExists {
-			writeJson(w, http.StatusBadRequest, dto.Error{
-				Status: dto.StatusError,
-				Error:  err.Error(),
-			})
-			return
+			panic(&Error{Err: err, Section: "register", StatusCode: http.StatusBadRequest, LogLevel: ErrorLevel, Log: false})
 		}
+
 		writeJson(w, http.StatusInternalServerError, dto.Error{
 			Status: dto.StatusError,
 			Error:  err.Error(),

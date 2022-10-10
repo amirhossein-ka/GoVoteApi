@@ -3,6 +3,7 @@ package mux
 import (
 	"GoVoteApi/config"
 	"GoVoteApi/controller"
+	"GoVoteApi/pkg/logger"
 	"GoVoteApi/service"
 	"context"
 	"log"
@@ -22,9 +23,12 @@ type rest struct {
 	server  *http.Server
 	router  *mux.Router
 	cfg     config.Server
+	recover *recovery
 }
 
 func (r *rest) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	defer r.recover.recoverHttp(w)
+	println(req.URL.Path)
 	w.Header().Set("Content-Type", "application/json")
 	r.router.ServeHTTP(w, req)
 }
@@ -51,10 +55,11 @@ func (r *rest) Stop() error {
 	return r.server.Shutdown(ctx)
 }
 
-func New(srv service.Service, cfg *config.Config) controller.Rest {
+func New(srv service.Service, cfg *config.Config, logger logger.Logger) controller.Rest {
 	return &rest{
-		router: mux.NewRouter(),
-		cfg:    cfg.Server,
+		router:  mux.NewRouter(),
+		cfg:     cfg.Server,
+		recover: &recovery{logger: logger},
 		handler: &handler{
 			srv: srv,
 			cfg: cfg.Secrets,

@@ -26,14 +26,12 @@ func (h *handler) authorizationMiddlewareMux(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		reqToken, err := getAuthToken(r)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			return
+			panic(&Error{Err: err, Section: "auth-middleware/GetTokenFromHeader", StatusCode: http.StatusBadRequest, Log: true})
 		}
 
 		claims, err := h.srv.ClaimsFromToken(reqToken)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			return
+			panic(&Error{Err: err, Section: "auth-middleware/ClaimFromToken", StatusCode: http.StatusUnauthorized, Log: true})
 		}
 
 		if claims != nil {
@@ -64,7 +62,6 @@ func (h *handler) authorizationMiddleware(next http.HandlerFunc) http.HandlerFun
 }
 
 func getAuthToken(r *http.Request) (string, error) {
-	// reqToken := w.Header.Get("Authorization")
 	reqToken := r.Header.Get("Authorization")
 	splitToken := strings.Split(reqToken, "Bearer")
 	if len(splitToken) != 2 {

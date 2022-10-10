@@ -2,29 +2,35 @@ package models
 
 import "database/sql/driver"
 
-// TODO
-// 1. complete vote repo,
-// 2. mayyybe change to psql
-// 3. idk,
-
 type (
 	VoteType   uint8
 	VoteStatus uint8
 
 	Vote struct {
 		ID          uint          `json:"id,omitempty"`
+		UserID      uint          `json:"user_id,omitempty"`
 		Title       string        `json:"title"`
 		Slug        string        `json:"slug"`
 		Type        VoteType      `json:"type"`
 		Status      VoteStatus    `json:"status"`
-		UserIDs     []string      `json:"user_ids"`
+		Votes       []UserVotes   `json:"user_ids"`
 		VoteOptions []VoteOptions `json:"options"`
 	}
 
 	VoteOptions struct {
+		ID           uint
+		VoteID       uint
 		Option       string `json:"option"`
-		Count        uint   `json:"cout"`
+		Count        uint   `json:"count"`
 		IsQuizAnswer bool   `json:"is_answer"`
+	}
+
+	UserVotes struct {
+		ID       uint
+		UserID   uint
+		Username string
+		VoteID   uint
+		OptionID uint
 	}
 )
 
@@ -33,15 +39,17 @@ const (
 	VoteQuiz
 	VoteAnon
 	VoteMulti
+	VoteMultiAnon
+	VoteQuizAnon
 )
 
 func (v *VoteType) Scan(value any) error {
-	*v = VoteType(value.(uint8))
+	*v = VoteType(value.(int64))
 	return nil
 }
 
-func (v VoteType) Value() (driver.Value, error) {
-	return int64(v), nil
+func (v *VoteType) Value() (driver.Value, error) {
+	return int64(*v), nil
 }
 
 const (
@@ -49,3 +57,12 @@ const (
 	VoteClose
 	VoteOpen
 )
+
+func (v *VoteStatus) Scan(value any) error {
+	*v = VoteStatus(value.(int64))
+	return nil
+}
+
+func (v *VoteStatus) Value() (driver.Value, error) {
+	return int64(*v), nil
+}

@@ -10,6 +10,7 @@ import (
 	"GoVoteApi/service"
 	"GoVoteApi/service/auth"
 	"GoVoteApi/service/user"
+	"GoVoteApi/service/vote"
 	"os"
 	"os/signal"
 	"syscall"
@@ -22,15 +23,16 @@ func Run(cfg *config.Config) error {
 	if err != nil {
 		return err
 	}
-	log.Info(logger.LogData{Section: "Run", Message: "Bananana"})
+	//log.Info(logger.LogData{Section: "Run", Message: "Running"})
 
 	srv, err := getService(cfg)
 	if err != nil {
 		return err
 	}
 
-	rest := mux.New(srv, cfg)
+	rest := mux.New(srv, cfg, log)
 	go func() {
+		log.Info(logger.LogData{Section: "cmd/Run", Message: "Starting Server"})
 		if err = rest.Start(":8000"); err != nil {
 			panic(err)
 		}
@@ -55,6 +57,7 @@ func getService(cfg *config.Config) (service.Service, error) {
 	a := auth.New(cfg.Secrets)
 	validate := validator.New()
 	userService := user.New(repo, validate, cache, a, cfg)
+	voteService := vote.New(repo, validate, cfg)
 
 	type srv struct {
 		service.AuthService
@@ -62,6 +65,6 @@ func getService(cfg *config.Config) (service.Service, error) {
 		service.UserService
 	}
 
-	return srv{a, nil, userService}, nil
+	return srv{a, voteService, userService}, nil
 
 }
