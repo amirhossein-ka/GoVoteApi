@@ -7,6 +7,8 @@ This is a api to get votes from people.
 Base path: `/api/v1/`.
 
 Please note that all endpoints need a trailing slash `/`.
+
+To use jwt token put it in request header with following format: `Authorization: Bearer <jwt_token here>`
 - __USER_ENDPOINTS__:
   - **Register**
     - Path: `/user/register/`
